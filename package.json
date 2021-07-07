@@ -1,0 +1,25 @@
+{
+  "name": "exchange_rate",
+  "version": "1.0.0",
+  "description": "Web page with the current exchange rate of the Belarusian Ruble against all foreign currencies set by the National Bank of the Republic of Belarus.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "debug": "nodemon --inspect index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "node",
+    "node.js"
+  ],
+  "author": "Michail Zyusko",
+  "license": "ISC",
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.10",
+    "express": "^4.17.1",
+    "puppeteer": "^10.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7"
+  }
+}
