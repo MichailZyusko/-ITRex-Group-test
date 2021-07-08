@@ -132,110 +132,67 @@ function printArray(arr) {
   }
 }
 
-module.exports.description = function (res) {
-  res.send({
-    task: `Write an algorithm for finding a way out of the maze. The maze is a 2-dimensional array in which:
-
-    '0' - start position
-    '.' - way
-    '*' - wall
-    The solution should be an array of strings with a sequence of necessary actions to exit the maze.
-
-    Example of input data:
-
-    [
-      ["*","*","*","*","*","*","*","*","*"],
-
-      ["*",".",".",".","*",".",".",".","*"],
-
-      ["*",".","*",".","*",".","*",".","*"],
-
-      [".",".","*",".","0",".","*",".","*"],
-
-      ["*","*","*",".","*","*","*","*","*"],
-
-      ["*","*",".",".","*","*","*","*","*"],
-
-      ["*","*",".","*","*","*","*","*","*"],
-
-      ["*","*","*","*","*","*","*","*","*"],
-    ]
-
-    Example of answer: 
-
-    ['left', 'top','top','left','left','bottom','bottom','left']`,
-    manual: "How you can use it?",
-    firstStep:
-      'Сhange the page URL from "http://localhost:3000/task_2" to "http://localhost:3000//task_2/labyrinth"',
-    secondStep:
-      'Change the page URL from "http://localhost:3000//task_2/labyrinth" to "http://localhost:3000//task_2/labyrinth?array=" and paste the array as described above',
-    thirdStep: "Wait a few seconds for the page to reload and see the result",
-  });
-};
-
-module.exports.solution = function (req, res) {
-  let arr = req.query.array; // Получаем массив из URL параметров
-
+function getArray(arr) {
   arr = arr.replace(/'/g, `"`); // Заменяем все "'" на """
-
   arr = arr.replace(/`/g, `"`); // Заменяем все "`" на """
-
   arr = arr.replace(/ /g, ``); // Удаляем все пробелы
 
-  if (arr.length - arr.lastIndexOf(",") < 3)
+  if (arr.length - arr.lastIndexOf(",") < 4)
     // Проверка на висячую запятую
     arr = arr.slice(arr.indexOf("["), arr.lastIndexOf(",")) + "]"; // Удаляем последнюю запятую
 
-  const array = JSON.parse(arr); // Преобразуем из строки к массиву
+  // let result;
+  try {
+    return JSON.parse(arr); // Преобразуем из строки к массиву
+  } catch (error) {
+    return -1;
+  }
+}
 
-  console.log("================================");
-  const start = new Date();
+module.exports.solution = function (arr) {
+  const array = getArray(arr);
+  if (~array) {
+    console.log("================================");
+    const start = new Date();
 
-  // Просто удобно проверять работоспособность :)
-  // [
-  //   ["*", "*", "*", "*", "*", "*", "*", "*", "*"],
+    // Просто удобно проверять работоспособность :)
+    // [
+    //   ["*", "*", "*", "*", "*", "*", "*", "*", "*"],
 
-  //   ["*", ".", ".", ".", "*", ".", ".", ".", "*"],
+    //   ["*", ".", ".", ".", "*", ".", ".", ".", "*"],
 
-  //   ["*", ".", "*", ".", "*", ".", "*", ".", "*"],
+    //   ["*", ".", "*", ".", "*", ".", "*", ".", "*"],
 
-  //   ["*", ".", "*", ".", "0", ".", "*", ".", "*"],
+    //   ["*", ".", "*", ".", "0", ".", "*", ".", "*"],
 
-  //   ["*", "*", "*", ".", "*", "*", "*", ".", "*"],
+    //   ["*", "*", "*", ".", "*", "*", "*", ".", "*"],
 
-  //   ["*", "*", ".", ".", "*", "*", "*", ".", "*"],
+    //   ["*", "*", ".", ".", "*", "*", "*", ".", "*"],
 
-  //   ["*", "*", ".", "*", "*", "*", "*", ".", "*"],
+    //   ["*", "*", ".", "*", "*", "*", "*", ".", "*"],
 
-  //   ["*", "*", "*", "*", "*", "*", "*", "*", "*"],
-  // ]
+    //   ["*", "*", ".", ".", "*", "*", "*", "*", "*"],
 
-  printArray(array);
-  console.log("================================");
-
-  let obj = makeMap(array, 0); // Вместо точек ставим цифры, обозначающие расстояние от старта
-  if (~obj) {
-    // Получаем координаты последней цифры и саму цифру
-    let i = obj.X;
-    let j = obj.Y;
-    let d = obj.d - 1;
-
-    let words = [];
-
-    // Восстанавлием путь из последней координаты в начальную
-    makeWay(array, d, i, j, words);
+    //   ["*", "*", "*", ".", "*", "*", "*", "*", "*"],
+    // ]
 
     printArray(array);
     console.log("================================");
-    console.log(words.reverse());
 
-    res.send(words);
-    console.log("================================");
-    console.log("Time:", new Date() - start);
-  } else {
-    res.send({
-      Error:
-        "I think there is no way out of here or your matrix is more than 10,000 characters.",
-    });
-  }
+    let obj = makeMap(array, 0); // Вместо точек ставим цифры, обозначающие расстояние от старта
+
+    if (~obj) {
+      let words = [];
+
+      // Восстанавлием путь из последней координаты в начальную
+      makeWay(array, obj.d - 1, obj.X, obj.Y, words);
+
+      printArray(array);
+      console.log("================================");
+      console.log(words.reverse());
+      console.log("================================");
+      console.log("Time:", new Date() - start);
+      return words;
+    } else return -1;
+  } else return -1;
 };

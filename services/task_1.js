@@ -3,18 +3,6 @@ const cheerio = require("cheerio");
 
 const URL = "https://www.nbrb.by/statistics/rates/ratesdaily.asp";
 
-module.exports.description = function (res) {
-  res.send({
-    task: `You need to create a web page with the current exchange rate of the Belarusian
-    ruble in relation to all the foreign currencies established by the National Bank of the
-    Republic of Belarus. The course should always be up-to-date at the time the web page is opened.`,
-    manual: "How you can use it?",
-    firstStep:
-      'Сhange the page URL from "http://localhost:3000/task_1" to "http://localhost:3000/task_1/course"',
-    secondStep: "Wait a few seconds for the page to reload and see the result",
-  });
-};
-
 function setCurNameObjectProperties(elem) {
   return elem.children
     .find((el) => el?.attribs?.class === "curName")
@@ -36,7 +24,7 @@ function setCurCoursObjectProperties(elem) {
     .children[0]?.data?.trim();
 }
 
-module.exports.solution = async function (req, res) {
+module.exports.solution = async function () {
   console.log("================================");
   const start = new Date();
 
@@ -59,9 +47,8 @@ module.exports.solution = async function (req, res) {
   });
 
   await browser.close();
-
-  res.send(arr);
   console.log(arr);
   console.log("================================");
   console.log("Time:", new Date() - start);
+  return arr;
 };

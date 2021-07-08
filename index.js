@@ -2,8 +2,8 @@ const express = require("express");
 const port = 3000;
 const app = express();
 
-const task_1 = require("./modules/task_1");
-const task_2 = require("./modules/task_2");
+const task_1 = require("./services/task_1");
+const task_2 = require("./services/task_2");
 
 app.get("/", (req, res) => {
   res.send({
@@ -20,21 +20,71 @@ app.get("/", (req, res) => {
 
 //description for first task
 app.get("/task_1", (req, res) => {
-  task_1.description(res);
+  res.send({
+    task: `You need to create a web page with the current exchange rate of the Belarusian
+    ruble in relation to all the foreign currencies established by the National Bank of the
+    Republic of Belarus. The course should always be up-to-date at the time the web page is opened.`,
+    manual: "How you can use it?",
+    firstStep:
+      'Сhange the page URL from "http://localhost:3000/task_1" to "http://localhost:3000/task_1/course"',
+    secondStep: "Wait a few seconds for the page to reload and see the result",
+  });
 });
 
 // solution for first task
 app.get("/task_1/course", async (req, res) => {
-  task_1.solution(req, res);
+  res.send(await task_1.solution());
 });
 
 //description for second task
 app.get("/task_2", (req, res) => {
-  task_2.description(res);
+  res.send({
+    task: `Write an algorithm for finding a way out of the maze. The maze is a 2-dimensional array in which:
+
+    '0' - start position
+    '.' - way
+    '*' - wall
+    The solution should be an array of strings with a sequence of necessary actions to exit the maze.`,
+
+    exampleOfInputData: `[
+      ["*","*","*","*","*","*","*","*","*"],
+
+      ["*",".",".",".","*",".",".",".","*"],
+
+      ["*",".","*",".","*",".","*",".","*"],
+
+      [".",".","*",".","0",".","*",".","*"],
+
+      ["*","*","*",".","*","*","*","*","*"],
+
+      ["*","*",".",".","*","*","*","*","*"],
+
+      ["*","*",".","*","*","*","*","*","*"],
+
+      ["*","*","*","*","*","*","*","*","*"],
+    ]`,
+
+    exampleOfAnswer: `['left', 'top','top','left','left','bottom','bottom','left']`,
+    manual: "How you can use it?",
+    firstStep:
+      'Сhange the page URL from "http://localhost:3000/task_2" to "http://localhost:3000//task_2/labyrinth"',
+    secondStep:
+      'Change the page URL from "http://localhost:3000//task_2/labyrinth" to "http://localhost:3000//task_2/labyrinth?array=" and paste the array as described above',
+    thirdStep: "Wait a few seconds for the page to reload and see the result",
+  });
 });
 // solution for second task
 app.get("/task_2/labyrinth", async (req, res) => {
-  task_2.solution(req, res);
+  const arr = req.query.array; // Получаем массив из URL параметров
+  const result = task_2.solution(arr);
+  if (~result) {
+    res.send(result);
+  } else {
+    res.send({
+      Error:
+        "Something went wrong. Perhaps you did not specify the array correctly, or there is no exit from it, or its length is more than 250 characters.",
+    });
+  }
 });
 
 app.listen(port, () => {
